@@ -18,7 +18,7 @@ echo "mysqldump -u root \
     --single-transaction \
     --compress \
     --order-by-primary  \
-    -p$PW | ./mysql -u admin \
+    -p$WPW | ./mysql -u admin \
         --port=3306 \
         --host=$RDBADDR \
         -p$RDBPW"
