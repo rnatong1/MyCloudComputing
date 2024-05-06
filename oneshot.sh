@@ -35,7 +35,7 @@ echo "mysqldump -u root \
 
 cp /home/ec2-user/lampstack-7.4.33-0/apache2/htdocs/wp-config.php /home/ec2-user/wp-config.php.1
 
-sed -i "s/localhost:3306/$RDBADDR:3306/g" /home/ec2-user/lampstack-7.4.33-0/apache2/htdocs/wp-config.php
+sed -i "s/localhost/$RDBADDR:3306/g" /home/ec2-user/lampstack-7.4.33-0/apache2/htdocs/wp-config.php
 
 #PW=$(cat /home/ec2-user/lampstack-7.4.33-0/apache2/htdocs/wp-config.php | grep DB_PASS | awk -F ' ' '{print $3}' | sed "s/'//g")
 PW=$(cat /home/ec2-user/lampstack-7.4.33-0/apache2/htdocs/wp-config.php | grep DB_PASS | awk -F ' ' '{print $3}')
