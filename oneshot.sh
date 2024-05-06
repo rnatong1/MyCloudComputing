@@ -42,8 +42,8 @@ PW=$(cat /home/ec2-user/lampstack-7.4.33-0/apache2/htdocs/wp-config.php | grep D
 
 echo $PW
 
-echo "./mysql -u root -proot -e \"CREATE USER 'wordpress' IDENTIFIED BY $PW; GRANT ALL ON wordpress.* TO 'wordpress'; flush privileges;\""
-/home/ec2-user/lampstack-7.4.33-0/mariadb/bin/mysql --host=$RDBADDR -u admin -p$RDBPW -e "CREATE USER 'wordpress' IDENTIFIED BY $PW; GRANT ALL ON wordpress.* TO 'wordpress'; flush privileges;"
+echo "./mysql -u root -proot -e \"CREATE USER 'wp_user' IDENTIFIED BY $PW; GRANT ALL ON wordpress.* TO 'wp_user'; flush privileges;\""
+/home/ec2-user/lampstack-7.4.33-0/mariadb/bin/mysql --host=$RDBADDR -u admin -p$RDBPW -e "CREATE USER 'wp_user' IDENTIFIED BY $PW; GRANT ALL ON wordpress.* TO 'wp_user'; flush privileges;"
 
 /home/ec2-user/lampstack-7.4.33-0/ctlscript.sh status
 /home/ec2-user/lampstack-7.4.33-0/ctlscript.sh stop
