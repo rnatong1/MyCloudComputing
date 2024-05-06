@@ -14,7 +14,7 @@ echo $WPW $RDBPW $RDBADDR
 
 
 echo "mysqldump -u root \
-    --databases bitnami_wordpress \
+    --databases wordpress \
     --single-transaction \
     --compress \
     --order-by-primary  \
@@ -23,28 +23,28 @@ echo "mysqldump -u root \
         --host=$RDBADDR \
         -p$RDBPW"
 
-/home/ec2-user/wordpress-5.9.1-0/mariadb/bin/mysqldump -u root \
-    --databases bitnami_wordpress \
+/home/ec2-user/lampstack-7.4.33-0/mariadb/bin/mysqldump -u root \
+    --databases wordpress \
     --single-transaction \
     --compress \
     --order-by-primary  \
-    -p$WPW | /home/ec2-user/wordpress-5.9.1-0/mariadb/bin/mysql -u admin \
+    -p$WPW | /home/ec2-user/lampstack-7.4.33-0/mariadb/bin/mysql -u admin \
         --port=3306 \
         --host=$RDBADDR \
         -p$RDBPW
 
-cp /home/ec2-user/wordpress-5.9.1-0/apps/wordpress/htdocs/wp-config.php /home/ec2-user/wp-config.php.1
+cp /home/ec2-user/lampstack-7.4.33-0/apache2/htdocs/wp-config.php /home/ec2-user/wp-config.php.1
 
-sed -i "s/localhost:3306/$RDBADDR:3306/g" /home/ec2-user/wordpress-5.9.1-0/apps/wordpress/htdocs/wp-config.php
+sed -i "s/localhost:3306/$RDBADDR:3306/g" /home/ec2-user/lampstack-7.4.33-0/apache2/htdocs/wp-config.php
 
-#PW=$(cat /home/ec2-user/wordpress-5.9.1-0/apps/wordpress/htdocs/wp-config.php | grep DB_PASS | awk -F ' ' '{print $3}' | sed "s/'//g")
-PW=$(cat /home/ec2-user/wordpress-5.9.1-0/apps/wordpress/htdocs/wp-config.php | grep DB_PASS | awk -F ' ' '{print $3}')
+#PW=$(cat /home/ec2-user/lampstack-7.4.33-0/apache2/htdocs/wp-config.php | grep DB_PASS | awk -F ' ' '{print $3}' | sed "s/'//g")
+PW=$(cat /home/ec2-user/lampstack-7.4.33-0/apache2/htdocs/wp-config.php | grep DB_PASS | awk -F ' ' '{print $3}')
 
 echo $PW
 
-echo "./mysql -u root -proot -e \"CREATE USER 'bn_wordpress' IDENTIFIED BY $PW; GRANT ALL ON bitnami_wordpress.* TO 'bn_wordpress'; flush privileges;\""
-/home/ec2-user/wordpress-5.9.1-0/mariadb/bin/mysql --host=$RDBADDR -u admin -p$RDBPW -e "CREATE USER 'bn_wordpress' IDENTIFIED BY $PW; GRANT ALL ON bitnami_wordpress.* TO 'bn_wordpress'; flush privileges;"
+echo "./mysql -u root -proot -e \"CREATE USER 'wordpress' IDENTIFIED BY $PW; GRANT ALL ON wordpress.* TO 'wordpress'; flush privileges;\""
+/home/ec2-user/lampstack-7.4.33-0/mariadb/bin/mysql --host=$RDBADDR -u admin -p$RDBPW -e "CREATE USER 'wordpress' IDENTIFIED BY $PW; GRANT ALL ON wordpress.* TO 'wordpress'; flush privileges;"
 
-/home/ec2-user/wordpress-5.9.1-0/ctlscript.sh status
-/home/ec2-user/wordpress-5.9.1-0/ctlscript.sh stop
-/home/ec2-user/wordpress-5.9.1-0/ctlscript.sh start apache
+/home/ec2-user/lampstack-7.4.33-0/ctlscript.sh status
+/home/ec2-user/lampstack-7.4.33-0/ctlscript.sh stop
+/home/ec2-user/lampstack-7.4.33-0/ctlscript.sh start apache
