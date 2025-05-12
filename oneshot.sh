@@ -23,12 +23,12 @@ echo "mysqldump -u root \
         --host=$RDBADDR \
         -p$RDBPW"
 
-/home/ec2-user/lampstack-7.3.1-0/mariadb/bin/mysqldump -u root \
+/home/ec2-user/lampstack-7.3.1-0/mysql/bin/mysqldump -u root \
     --databases wordpress \
     --single-transaction \
     --compress \
     --order-by-primary  \
-    -p$WPW | /home/ec2-user/lampstack-7.3.1-0/mariadb/bin/mysql -u admin \
+    -p$WPW | /home/ec2-user/lampstack-7.3.1-0/mysql/bin/mysql -u admin \
         --port=3306 \
         --host=$RDBADDR \
         -p$RDBPW
@@ -43,7 +43,7 @@ PW=$(cat /home/ec2-user/lampstack-7.3.1-0/apache2/htdocs/wp-config.php | grep DB
 echo $PW
 
 echo "./mysql -u root -proot -e \"CREATE USER 'wp_user' IDENTIFIED BY $PW; GRANT ALL ON wordpress.* TO 'wp_user'; flush privileges;\""
-/home/ec2-user/lampstack-7.3.1-0/mariadb/bin/mysql --host=$RDBADDR -u admin -p$RDBPW -e "CREATE USER 'wp_user' IDENTIFIED BY $PW; GRANT ALL ON wordpress.* TO 'wp_user'; flush privileges;"
+/home/ec2-user/lampstack-7.3.1-0/mysql/bin/mysql --host=$RDBADDR -u admin -p$RDBPW -e "CREATE USER 'wp_user' IDENTIFIED BY $PW; GRANT ALL ON wordpress.* TO 'wp_user'; flush privileges;"
 
 /home/ec2-user/lampstack-7.3.1-0/ctlscript.sh status
 /home/ec2-user/lampstack-7.3.1-0/ctlscript.sh stop
