@@ -1,0 +1,87 @@
+sudo yum update -y
+
+sudo yum install -y libncurses* libnsl perl-Data-Dumper perl-File-Copy perl-Sys-Hostname libxcrypt-compat iptables-services
+
+wget https://github.com/rnatong1/MyCloudComputing/releases/download/v0.2/bitnami-lampstack-7.3.1-0-dev-linux-x64-installer.run
+
+chmod 755 bitnami-lampstack-7.3.1-0-dev-linux-x64-installer.run
+
+./bitnami-lampstack-7.3.1-0-dev-linux-x64-installer.run
+
+-------------------------
+
+cd ~
+cd lampstack-7.3.1-0/
+./ctlscript.sh stop
+cd apache2/htdocs
+rm -r *
+wget https://wordpress.org/latest.tar.gz
+tar -xzvf latest.tar.gz 
+cd wordpress
+mv * ../
+cd ..
+rm -r wordpress
+rm latest.tar.gz
+cd /home/ec2-user/lampstack-7.3.1-0/
+./ctlscript.sh start
+
+--------------------------
+
+./use_lampstack
+
+mysql -u root -p
+
+//비밀번호는 rootroot
+
+CREATE DATABASE wordpress;
+
+CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'wp_pass';
+
+GRANT ALL PRIVILEGES ON wordpress.* TO 'wp_user'@'localhost';
+
+FLUSH PRIVILEGES;
+
+EXIT;
+
+exit
+
+
+-------------------------------------
+
+cd ~
+./lampstack-7.3.1-0/ctlscript.sh start
+
+--------------------------------
+
+cd ~
+sudo vi lampstack-7.3.1-0/apache2/htdocs/wp-config.php 
+
+-------------------------------------------
+
+define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST']);
+define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
+
+---------------------------------------------
+
+./lampstack-7.3.1-0/ctlscript.sh restart
+
+
+-------------------------------
+
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+cd ~
+cd lampstack-7.3.1-0
+./ctlscript.sh restart
+
+---------------------------------
+sudo vi /etc/init.d/wordpress
+
+#!/bin/bash
+# chkconfig: 2345 20 80
+# description: WordPress init script
+runuser -l ec2-user -c '/home/ec2-user/lampstack-7.3.1-0/ctlscript.sh start'
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+
+sudo chmod +x /etc/init.d/wordpress
+sudo chkconfig --add /etc/init.d/wordpress
+sudo reboot
