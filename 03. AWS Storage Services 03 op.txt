@@ -1,0 +1,35 @@
+cd ~
+./lampstack-7.3.1-0/ctlscript.sh start
+
+--------------------------------
+
+sudo vi lampstack-7.3.1-0/apache2/htdocs/wp-config.php 
+
+-------------------------------------------
+
+define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST']);
+define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
+
+---------------------------------------------
+
+./lampstack-7.3.1-0/ctlscript.sh restart
+
+----------------------------------------------
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::본인의버킷이름/*"
+        }
+    ]
+}
+
+----------------------------
+
+cd /home/ec2-user/lampstack-7.3.1-0/apache2/htdocs/wp-content/uploads/2024/04
+ls -al

@@ -1,0 +1,33 @@
+mkfs -t ext4 /dev/xvdf
+cd ~
+mkdir temp
+mount /dev/xvdf temp/
+df -h
+------------------------
+sudo -s
+cd ~
+mkdir temp
+mount /dev/xvdf temp/
+df -h
+ls temp/
+cat temp/test.txt
+------------------------
+cd ~
+pwd
+mkdir efs
+sudo mount –t nfs4 … //EFS에서 복사했던 명령어
+ls -al
+sudo chown ec2-user:ec2-user efs
+ls -al efs/
+vi efs/test.txt
+cat efs/test.txt
+ls efs/
+------------------------------
+cd ~
+pwd
+mkdir efs
+sudo mount –t nfs4 … //EFS에서 복사했던 명령어
+ls -al efs/
+cat efs/test.txt
+rm efs/test.txt
+sudo umount efs
