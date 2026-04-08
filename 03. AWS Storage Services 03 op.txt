@@ -1,26 +1,8 @@
-cd ~
-./lampstack-7.3.1-0/ctlscript.sh start
-
---------------------------------
-
-sudo vi lampstack-7.3.1-0/apache2/htdocs/wp-config.php 
-
--------------------------------------------
-
-define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST']);
-define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
-
----------------------------------------------
-
-./lampstack-7.3.1-0/ctlscript.sh restart
-
-----------------------------------------------
-
 {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "PublicReadGetObject",
+            "Sid": "AllowPublicRead",
             "Effect": "Allow",
             "Principal": "*",
             "Action": "s3:GetObject",
@@ -29,7 +11,14 @@ define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
     ]
 }
 
-----------------------------
+------------------------------------------
 
-cd /home/ec2-user/lampstack-7.3.1-0/apache2/htdocs/wp-content/uploads/2024/04
+wget https://raw.githubusercontent.com/rnatong1/MyCloudComputing/main/oneshot_wordpress.sh
+
+chmod +x oneshot_wordpress.sh
+
+sudo ./oneshot_wordpress.sh
+
+----------------------------------------------
+cd /var/www/html/wp-content/uploads/2026/04/
 ls -al

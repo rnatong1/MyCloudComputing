@@ -31,7 +31,7 @@ cd /home/ec2-user/lampstack-7.3.1-0/
 
 mysql -u root -p
 
-//비밀번호는 rootroot
+##비밀번호는 rootroot
 
 CREATE DATABASE wordpress;
 
@@ -64,24 +64,3 @@ define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
 ---------------------------------------------
 
 ./lampstack-7.3.1-0/ctlscript.sh restart
-
-
--------------------------------
-
-sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
-cd ~
-cd lampstack-7.3.1-0
-./ctlscript.sh restart
-
----------------------------------
-sudo vi /etc/init.d/wordpress
-
-#!/bin/bash
-# chkconfig: 2345 20 80
-# description: WordPress init script
-runuser -l ec2-user -c '/home/ec2-user/lampstack-7.3.1-0/ctlscript.sh start'
-iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
-
-sudo chmod +x /etc/init.d/wordpress
-sudo chkconfig --add /etc/init.d/wordpress
-sudo reboot
