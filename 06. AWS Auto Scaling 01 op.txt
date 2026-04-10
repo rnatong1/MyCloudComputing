@@ -1,0 +1,4 @@
+<AB 테스트 수행>
+/usr/bin/ab
+/usr/bin/ab -t 180 -c 60 <본인의 ELB 주소>
+/usr/bin/ab -n 200000 -c 30 <본인의 ELB 주소>
