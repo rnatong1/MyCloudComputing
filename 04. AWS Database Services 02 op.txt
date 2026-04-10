@@ -1,19 +1,22 @@
-# 아파치와 로컬 MySQL 시작
+<아파치와 로컬 MySQL 시작>
 sudo systemctl start apache2
 sudo systemctl start mysql
 
-# 스크립트 다운로드
+
+<스크립트 다운로드>
 wget https://raw.githubusercontent.com/rnatong1/MyCloudComputing/main/oneshot_db.sh
 
-# 권한 부여
+
+<권한 부여>
 chmod +x oneshot_db.sh
 
-# 스크립트 실행 
+
+<스크립트 실행 >
 # 형식: sudo ./oneshot_db.sh [로컬DB비번] [RDS관리자비번] [RDS엔드포인트]
 sudo ./oneshot_db.sh rootroot admin123 <RDS DB Endpoint>
 
-# 인스턴스 시작 시 로컬 DB 비활성화
-sudo systemctl disable mysql
 
-# 로컬 DB 끄기
+<인스턴스 시작 시 로컬 DB 비활성화>
+sudo systemctl disable mysql
+<로컬 DB 끄기>
 sudo systemctl stop mysql

@@ -1,15 +1,13 @@
+<비트나미 워드프레스 설치를 위한 업데이트 및 패키지 실행>
 sudo yum update -y
-
 sudo yum install -y libncurses* libnsl perl-Data-Dumper perl-File-Copy perl-Sys-Hostname libxcrypt-compat iptables-services
-
 wget https://github.com/rnatong1/MyCloudComputing/releases/download/v0.2/bitnami-lampstack-7.3.1-0-dev-linux-x64-installer.run
-
 chmod 755 bitnami-lampstack-7.3.1-0-dev-linux-x64-installer.run
-
 ./bitnami-lampstack-7.3.1-0-dev-linux-x64-installer.run
 
--------------------------
 
+
+<워드프레스 압축파일 다운로드 및 파일 이동, 그 후 잔존파일 삭제>
 cd ~
 cd lampstack-7.3.1-0/
 ./ctlscript.sh stop
@@ -25,42 +23,38 @@ rm latest.tar.gz
 cd /home/ec2-user/lampstack-7.3.1-0/
 ./ctlscript.sh start
 
---------------------------
 
+
+<워드프레스 연동을 위한 데이터베이스 설정>
 ./use_lampstack
-
 mysql -u root -p
-
 ##비밀번호는 rootroot
-
 CREATE DATABASE wordpress;
-
 CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'wp_pass';
-
 GRANT ALL PRIVILEGES ON wordpress.* TO 'wp_user'@'localhost';
-
 FLUSH PRIVILEGES;
-
 EXIT;
-
 exit
 
 
--------------------------------------
 
+<서버 시작>
 cd ~
 ./lampstack-7.3.1-0/ctlscript.sh start
 
---------------------------------
 
+
+<vi 편집기를 사용하여 wp-config.php 파일 수정>
 cd ~
 sudo vi lampstack-7.3.1-0/apache2/htdocs/wp-config.php 
 
--------------------------------------------
 
+
+<인스턴스의 실제 IP에 대응하도록 서버주소 설정>
 define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST']);
 define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
 
----------------------------------------------
 
+
+<인스턴스 재시작>
 ./lampstack-7.3.1-0/ctlscript.sh restart

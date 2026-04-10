@@ -1,9 +1,12 @@
+<파일 시스템 생성 후 볼륨 마운트>
 mkfs -t ext4 /dev/xvdf
 cd ~
 mkdir temp
 mount /dev/xvdf temp/
 df -h
-------------------------
+
+
+<temp 폴더에 볼륨 마운트 후 test.txt 파일 생성>
 sudo -s
 cd ~
 mkdir temp
@@ -11,7 +14,9 @@ mount /dev/xvdf temp/
 df -h
 ls temp/
 cat temp/test.txt
-------------------------
+
+
+<EFS 마운트 후 test.txt 파일 생성>
 cd ~
 pwd
 mkdir efs
@@ -22,7 +27,9 @@ ls -al efs/
 vi efs/test.txt
 cat efs/test.txt
 ls efs/
-------------------------------
+
+
+<EFS 마운트 후 test.txt 파일 확인, 그 후 언마운트>
 cd ~
 pwd
 mkdir efs

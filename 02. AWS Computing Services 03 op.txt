@@ -1,9 +1,7 @@
+<워드프레스에 연동할 데이터베이스 생성>
+
 CREATE DATABASE wordpress;
-
 CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'wp_pass';
-
 GRANT ALL PRIVILEGES ON wordpress.* TO 'wp_user'@'localhost';
-
 FLUSH PRIVILEGES;
-
 EXIT;

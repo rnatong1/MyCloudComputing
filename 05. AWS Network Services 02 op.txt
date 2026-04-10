@@ -1,0 +1,55 @@
+<NFS 클라이언트 설치>
+sudo apt update
+sudo apt install -y nfs-common
+
+
+<서버 일시 종료, 기존 데이터 백업 및 기존 폴더 비우기>
+sudo systemctl stop apache2
+sudo cp -prf /var/www/html /home/ubuntu/html_backup
+sudo rm -rf /var/www/html/*
+
+
+<<비운 폴더에 EFS 마운트 후 확인>
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport <본인의 EFS ID>:/ /var/www/html
+df -h
+
+
+<백업했던 데이터를 마운트된 EFS로 복사>
+sudo cp -prf /home/ubuntu/html_backup/. /var/www/html/
+
+
+<소유권 변경 (안 하면 웹사이트 수정 불가)> 
+sudo chown -R www-data:www-data /var/www/html
+
+
+<마지막 확인 후 접속해보기>
+ls -al /var/www/html
+
+
+<서버 시작>
+sudo systemctl start apache2
+
+
+
+
+<부팅 시 EFS 마운트를 위한 파일 시스템 테이블(fstab: File System Table) 수정, 쉽게 말하자면 시작프로그램>
+sudo vi /etc/fstab
+
+
+<fstab 맨 아래 줄에 아래의 내용 추가>
+<본인의 EFS_ID>:/ /var/www/html nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0
+
+
+<재부팅 후 서버 동작 확인해보기>
+sudo reboot
+
+
+<사용자 데이터 추가>
+#!/bin/bash
+mount -a
+systemctl restart apache2
+
+
+
+<기존 서버 끄기>
+sudo systemctl stop apache2

@@ -1,3 +1,4 @@
+<버킷 정책 수정>
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -11,14 +12,14 @@
     ]
 }
 
-------------------------------------------
 
+<원샷 파일 다운로드 후 실행>
 wget https://raw.githubusercontent.com/rnatong1/MyCloudComputing/main/oneshot_wordpress.sh
-
 chmod +x oneshot_wordpress.sh
-
 sudo ./oneshot_wordpress.sh
 
-----------------------------------------------
+
+
+<서버 폴더 내에 저장된 이미지 파일 확인>
 cd /var/www/html/wp-content/uploads/2026/04/
 ls -al
