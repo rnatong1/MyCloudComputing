@@ -1,8 +1,18 @@
 <파일 시스템 생성 후 볼륨 마운트>
-mkfs -t ext4 /dev/xvdf
+mkfs -t ext4 /dev/nvme1n1
 cd ~
 mkdir temp
-mount /dev/xvdf temp/
+mount /dev/nvme1n1 temp/
+df -h
+
+
+<vi 편집기를 사용하여 test.txt 생성>
+vi temp/test.txt
+ls -al temp/
+
+
+<언마운트 후 파일 시스템 등록 해제>
+umount temp
 df -h
 
 
@@ -10,7 +20,7 @@ df -h
 sudo -s
 cd ~
 mkdir temp
-mount /dev/xvdf temp/
+mount /dev/nvme1n1 temp/
 df -h
 ls temp/
 cat temp/test.txt
