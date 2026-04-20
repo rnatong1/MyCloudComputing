@@ -46,5 +46,5 @@ mkdir efs
 sudo mount –t nfs4 … //EFS에서 복사했던 명령어
 ls -al efs/
 cat efs/test.txt
-rm efs/test.txt
+sudo rm efs/test.txt
 sudo umount efs
