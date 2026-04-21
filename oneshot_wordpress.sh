@@ -32,3 +32,36 @@ cat <<EOT >> /var/www/html/wp-config.php
 define( 'WP_HOME', 'http://' . \$_SERVER['HTTP_HOST'] );
 define( 'WP_SITEURL', 'http://' . \$_SERVER['HTTP_HOST'] );
 EOT
+
+# 6. 부팅 시 WordPress DB의 IP 자동 업데이트 서비스 등록
+cat <<'EOF' > /etc/systemd/system/wp-update-ip.service
+[Unit]
+Description=Update WordPress IP on boot
+After=mysql.service apache2.service
+Requires=mysql.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/wp-update-ip.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cat <<'EOF' > /usr/local/bin/wp-update-ip.sh
+#!/bin/bash
+# EC2 현재 퍼블릭 IP 가져오기
+PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+
+# WordPress DB IP 업데이트
+mysql -u root <<MYSQL
+USE wordpress;
+UPDATE wp_options SET option_value='http://${PUBLIC_IP}' WHERE option_name='siteurl';
+UPDATE wp_options SET option_value='http://${PUBLIC_IP}' WHERE option_name='home';
+MYSQL
+EOF
+
+chmod +x /usr/local/bin/wp-update-ip.sh
+systemctl enable wp-update-ip.service
+systemctl start wp-update-ip.service
