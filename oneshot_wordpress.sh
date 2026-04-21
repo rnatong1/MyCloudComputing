@@ -51,8 +51,11 @@ EOF
 
 cat <<'EOF' > /usr/local/bin/wp-update-ip.sh
 #!/bin/bash
-# EC2 현재 퍼블릭 IP 가져오기
-PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+# IMDSv2 방식으로 토큰 먼저 발급 후 IP 가져오기
+TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" \
+    -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+PUBLIC_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
+    http://169.254.169.254/latest/meta-data/public-ipv4)
 
 # wp_options 테이블이 존재할 때만 업데이트 (WordPress 초기 설치 완료 후에만 존재)
 # 5초 간격으로 최대 6번(30초) 확인
