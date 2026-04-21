@@ -54,12 +54,25 @@ cat <<'EOF' > /usr/local/bin/wp-update-ip.sh
 # EC2 현재 퍼블릭 IP 가져오기
 PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
 
-# WordPress DB IP 업데이트
-mysql -u root <<MYSQL
+# wp_options 테이블이 존재할 때만 업데이트 (WordPress 초기 설치 완료 후에만 존재)
+# 5초 간격으로 최대 6번(30초) 확인
+for i in $(seq 1 6); do
+    TABLE_EXISTS=$(mysql -u root -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='wordpress' AND table_name='wp_options';" -s 2>/dev/null)
+    if [ "$TABLE_EXISTS" = "1" ]; then
+        mysql -u root <<MYSQL
 USE wordpress;
 UPDATE wp_options SET option_value='http://${PUBLIC_IP}' WHERE option_name='siteurl';
 UPDATE wp_options SET option_value='http://${PUBLIC_IP}' WHERE option_name='home';
 MYSQL
+        echo "WordPress IP updated to ${PUBLIC_IP}"
+        exit 0
+    fi
+    sleep 5
+done
+
+# WordPress 초기 설치 전이면 그냥 종료 (에러 아님)
+echo "wp_options not found, skipping (WordPress not installed yet)"
+exit 0
 EOF
 
 chmod +x /usr/local/bin/wp-update-ip.sh
