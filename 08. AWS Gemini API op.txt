@@ -44,4 +44,14 @@ print(response.text)
 python3 ./testproject/test_gemini.py
 
 
-<app.py 및 index.html 파일 다운로드 후 실행>
+<app.py 및 index.html 파일 다운로드>
+mkdir -p ~/testproject/templates
+wget -O ~/testproject/app.py \
+  "https://raw.githubusercontent.com/rnatong1/MyCloudComputing/main/08.%20AWS%20Gemini%20API%20materials/app.py"
+wget -O ~/testproject/templates/index.html \
+  "https://raw.githubusercontent.com/rnatong1/MyCloudComputing/main/08.%20AWS%20Gemini%20API%20materials/index.html"
+
+
+<웹서버 실행>
+cd ~/testproject
+python3 app.py
