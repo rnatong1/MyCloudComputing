@@ -1,0 +1,47 @@
+<curl로 Gemini API 호출 테스트>
+curl -s \
+  -H "Content-Type: application/json" \
+  -d '{"contents":[{"parts":[{"text":"안녕! 넌 누구야?"}]}]}' \
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=YOUR_API_KEY"
+
+
+<프로젝트 폴더 생성 후, API 키 저장>
+mkdir testproject
+vi ./testproject/.env
+
+
+<.env파일에 입력. YOUR_API_KEY를 본인의 API key로 변경>
+GEMINI_API_KEY="YOUR_API_KEY"
+
+
+<flask 및 의존성 설치>
+sudo yum install python3-pip -y
+pip3 install google-generativeai flask
+pip3 install python-dotenv
+pip3 install google-genai
+
+
+<테스트 코드파일 작성>
+vi ./testproject/test_gemini.py
+
+
+<test_gemini.py 파일에 다음을 입력>
+from google import genai
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+client = genai.Client(api_key=os.environ['GEMINI_API_KEY'])
+response = client.models.generate_content(
+    model="gemini-2.5-flash-lite",
+    contents="안녕! 넌 누구야?"
+)
+print(response.text)
+
+
+<test_gemini.py 실행>
+python3 ./testproject/test_gemini.py
+
+
+<app.py 및 index.html 파일 다운로드 후 실행>

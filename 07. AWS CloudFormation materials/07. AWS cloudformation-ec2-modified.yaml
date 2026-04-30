@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  EC2 Instance + Security Group template
+  (Amazon Linux 2023, t2.micro)
+
+# -------------------------------------------------------
+# Parameters: values to input at deployment
+# -------------------------------------------------------
+Parameters:
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Select the Key Pair for EC2 access
+
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t3.micro
+    Description: Instance type (default t2.micro)
+
+# -------------------------------------------------------
+# Resources: AWS resources to create
+# -------------------------------------------------------
+Resources:
+
+  # Security Group - inbound port rules
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "EC2 lab security group (SSH/HTTP/HTTPS/8080/3306)"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+          Description: "SSH"
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: "HTTP"
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: "HTTPS"
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+          Description: "Application port"
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+          Description: "MySQL"
+      Tags:
+        - Key: Name
+          Value: my-ec2-sg
+
+  # EC2 Instance
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      # Fetch latest Amazon Linux 2023 AMI automatically via SSM
+      ImageId: !Sub "{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}"
+      KeyName: !Ref KeyPairName
+      SecurityGroups:
+        - !Ref MySecurityGroup
+      Tags:
+        - Key: Name
+          Value: my-cloudformation-ec2
+
+# -------------------------------------------------------
+# Outputs: values displayed after stack creation
+# -------------------------------------------------------
+Outputs:
+  PublicIP:
+    Description: "Public IP address of the EC2 instance"
+    Value: !GetAtt MyEC2Instance.PublicIp
+
+  PublicDNS:
+    Description: "Public DNS of the EC2 instance"
+    Value: !GetAtt MyEC2Instance.PublicDnsName
+
+  SSHCommand:
+    Description: "SSH command (replace key file path as needed)"
+    Value: !Sub "ssh -i your-key.pem ec2-user@${MyEC2Instance.PublicIp}"
+
+  SecurityGroupId:
+    Description: "Created Security Group ID"
+    Value: !GetAtt MySecurityGroup.GroupId
