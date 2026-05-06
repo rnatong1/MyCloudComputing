@@ -27,18 +27,21 @@ sed -i "s/database_name_here/wordpress/" /var/www/html/wp-config.php
 sed -i "s/username_here/wp_user/" /var/www/html/wp-config.php
 sed -i "s/password_here/wp_pass/" /var/www/html/wp-config.php
 
-# 파일 끝에 코드 추가
-cat <<EOT >> /var/www/html/wp-config.php
-define( 'WP_HOME', 'http://' . \$_SERVER['HTTP_HOST'] );
-define( 'WP_SITEURL', 'http://' . \$_SERVER['HTTP_HOST'] );
-EOT
+# wp-config.php의 require_once 바로 앞에 동적 URL define 삽입
+# 반드시 require_once ABSPATH.'wp-settings.php' 보다 앞에 있어야
+# WordPress 코어 로딩 전에 WP_HOME/WP_SITEURL이 적용됨
+# (파일 끝에 append하면 require_once 이후가 되어 무시됨)
+sed -i "s|require_once ABSPATH . 'wp-settings.php';|define( 'WP_HOME', 'http://' . \$_SERVER['HTTP_HOST'] );\ndefine( 'WP_SITEURL', 'http://' . \$_SERVER['HTTP_HOST'] );\nrequire_once ABSPATH . 'wp-settings.php';|" /var/www/html/wp-config.php
 
-# 6. 부팅 시 WordPress DB의 IP 자동 업데이트 서비스 등록
+# 6. 부팅 시 Apache 재시작 서비스 등록
+# - DB URL 업데이트 로직 제거: wp-config.php의 동적 define과 충돌하며,
+#   RDS offload 후 로컬 mysql이 꺼진 상태에서 DB 접속 시도 시 오류 발생
+# - mysql.service 의존성 제거: RDS offload 이후에도 서비스가 정상 동작하도록
 cat <<'EOF' > /etc/systemd/system/wp-update-ip.service
 [Unit]
-Description=Update WordPress IP on boot
-After=mysql.service apache2.service
-Requires=mysql.service
+Description=Restart Apache on boot for WordPress
+After=network-online.target apache2.service
+Wants=network-online.target
 
 [Service]
 Type=oneshot
@@ -51,30 +54,10 @@ EOF
 
 cat <<'EOF' > /usr/local/bin/wp-update-ip.sh
 #!/bin/bash
-# IMDSv2 방식으로 토큰 먼저 발급 후 IP 가져오기
-TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" \
-    -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
-PUBLIC_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
-    http://169.254.169.254/latest/meta-data/public-ipv4)
-
-# wp_options 테이블이 존재할 때만 업데이트 (WordPress 초기 설치 완료 후에만 존재)
-# 5초 간격으로 최대 6번(30초) 확인
-for i in $(seq 1 6); do
-    TABLE_EXISTS=$(mysql -u root -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='wordpress' AND table_name='wp_options';" -s 2>/dev/null)
-    if [ "$TABLE_EXISTS" = "1" ]; then
-        mysql -u root <<MYSQL
-USE wordpress;
-UPDATE wp_options SET option_value='http://${PUBLIC_IP}' WHERE option_name='siteurl';
-UPDATE wp_options SET option_value='http://${PUBLIC_IP}' WHERE option_name='home';
-MYSQL
-        echo "WordPress IP updated to ${PUBLIC_IP}"
-        exit 0
-    fi
-    sleep 5
-done
-
-# WordPress 초기 설치 전이면 그냥 종료 (에러 아님)
-echo "wp_options not found, skipping (WordPress not installed yet)"
+# wp-config.php에 WP_HOME/WP_SITEURL이 동적으로 정의되어 있으므로
+# DB 업데이트 없이 Apache 재시작만으로 IP 변경에 대응 가능
+systemctl restart apache2
+echo "Apache restarted successfully"
 exit 0
 EOF
 
