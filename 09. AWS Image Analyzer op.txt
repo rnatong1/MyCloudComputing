@@ -11,3 +11,7 @@ AWS_BUCKET_NAME="YOUR_BUCKET_NAME"
 <스크립트 파일 다운로드 및 실행>
 wget https://raw.githubusercontent.com/rnatong1/MyCloudComputing/main/09.%20AWS%20Image%20Analyzer%20materials/setup.sh
 bash setup.sh
+
+
+<Flask 실행>
+python3 ./image_analyzer/app.py

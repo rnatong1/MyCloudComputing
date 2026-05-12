@@ -6,7 +6,7 @@ mkdir -p image_analyzer/templates
 
 wget -O image_analyzer/app.py                  "$BASE/app.py"
 wget -O image_analyzer/requirements.txt        "$BASE/requirements.txt"
-wget -O image_analyzer/templates/index.html    "$BASE/templates/index.html"
-wget -O image_analyzer/templates/result.html   "$BASE/templates/result.html"
+wget -O image_analyzer/templates/index.html    "$BASE/index.html"
+wget -O image_analyzer/templates/result.html   "$BASE/result.html"
 
 pip install -r ./image_analyzer/requirements.txt
