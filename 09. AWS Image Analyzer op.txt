@@ -8,8 +8,6 @@ GEMINI_API_KEY="YOUR_API_KEY"
 AWS_BUCKET_NAME="YOUR_BUCKET_NAME"
 
 
-<패키지 다운로드>
-pip install -r ./image_analyzer/requirements.txt
-
-
-<구성파일 다운로드>
+<스크립트 파일 다운로드 및 실행>
+wget https://raw.githubusercontent.com/rnatong1/MyCloudComputing/main/09.%20AWS%20Image%20Analyzer%20materials/setup.sh
+bash setup.sh
