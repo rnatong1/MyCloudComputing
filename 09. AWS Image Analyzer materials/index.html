@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 이미지 분석기</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🖼️ AI 이미지 분석기</h1>
+    <p class="subtitle">이미지를 업로드하면 Gemini AI가 분석해드립니다</p>
+
+    <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">📁</div>
+        <p>이미지를 드래그하거나 클릭하여 선택하세요</p>
+        <p class="hint">JPG, PNG, GIF, WEBP 지원</p>
+        <input type="file" id="imageInput" name="image" accept="image/*" required>
+      </div>
+
+      <div id="preview-wrap" style="display:none;">
+        <img id="preview" src="" alt="미리보기">
+        <p id="filename"></p>
+      </div>
+
+      <button type="submit" id="submitBtn" disabled>🔍 분석하기</button>
+    </form>
+
+    <div id="loading" style="display:none;">
+      <div class="spinner"></div>
+      <p>AI가 이미지를 분석 중입니다...</p>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('imageInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const preview = document.getElementById('preview');
+    const previewWrap = document.getElementById('preview-wrap');
+    const filenameP = document.getElementById('filename');
+    const submitBtn = document.getElementById('submitBtn');
+    const form = document.getElementById('uploadForm');
+    const loading = document.getElementById('loading');
+
+    uploadArea.addEventListener('click', () => input.click());
+
+    uploadArea.addEventListener('dragover', e => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+    uploadArea.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      if (e.dataTransfer.files[0]) {
+        input.files = e.dataTransfer.files;
+        showPreview(e.dataTransfer.files[0]);
+      }
+    });
+
+    input.addEventListener('change', () => {
+      if (input.files[0]) showPreview(input.files[0]);
+    });
+
+    function showPreview(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.src = e.target.result;
+        previewWrap.style.display = 'block';
+        filenameP.textContent = file.name;
+        submitBtn.disabled = false;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    form.addEventListener('submit', () => {
+      loading.style.display = 'flex';
+      submitBtn.disabled = true;
+    });
+  </script>
+</body>
+</html>

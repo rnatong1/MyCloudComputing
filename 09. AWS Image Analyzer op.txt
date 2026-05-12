@@ -1,0 +1,15 @@
+<프로젝트 폴더 생성 후, API 키 저장>
+mkdir image_analyzer
+vi ./image_analyzer/.env
+
+
+<.env 파일에 입력. YOUR_API_KEY와 YOUR_BUCKET_NAME을 본인의 API key 및 버킷 이름으로 변경>
+GEMINI_API_KEY="YOUR_API_KEY"
+AWS_BUCKET_NAME="YOUR_BUCKET_NAME"
+
+
+<패키지 다운로드>
+pip install -r ./image_analyzer/requirements.txt
+
+
+<구성파일 다운로드>

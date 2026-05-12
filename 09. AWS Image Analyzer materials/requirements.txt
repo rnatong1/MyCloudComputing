@@ -1,0 +1,4 @@
+flask
+google-genai
+boto3
+python-dotenv
