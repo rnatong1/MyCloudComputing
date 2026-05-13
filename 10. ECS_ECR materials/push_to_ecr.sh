@@ -2,7 +2,7 @@
 # =====================================================
 # 4차시 실습 push_to_ecr.sh
 # ECR 로그인 → 이미지 태그 → push
-# 실행 방법: bash push_to_ecr.sh
+# 실행 방법: bash push_to_ecr.sh <ECR_URI>
 # =====================================================
 
 set -e
@@ -11,13 +11,15 @@ set -e
 # AWS 콘솔 → ECR → 리포지토리 → '푸시 명령 보기' 에서 확인
 if [ -z "$1" ]; then
   echo "사용법: bash push_to_ecr.sh <ECR_URI>"
-  echo "예시:   bash push_to_ecr.sh 123456789012.dkr.ecr.ap-northeast-2.amazonaws.com/ai-image-analyzer"
+  echo "예시:   bash push_to_ecr.sh 123456789012.dkr.ecr.us-east-1.amazonaws.com/ai-image-analyzer"
   exit 1
 fi
 
 ECR_URI=$1
-REGION="ap-northeast-2"
+# ECR URI에서 리전 자동 추출 (xxx.dkr.ecr.REGION.amazonaws.com/...)
+REGION=$(echo $ECR_URI | cut -d'.' -f4)
 
+echo "리전: $REGION"
 echo "[1/3] ECR 로그인 중..."
 aws ecr get-login-password --region $REGION \
   | docker login --username AWS --password-stdin \
