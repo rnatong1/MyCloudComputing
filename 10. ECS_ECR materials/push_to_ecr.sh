@@ -16,19 +16,18 @@ if [ -z "$1" ]; then
 fi
 
 ECR_URI=$1
-# ECR URI에서 리전 자동 추출 (xxx.dkr.ecr.REGION.amazonaws.com/...)
+# ECR URI에서 리전 자동 추출
 REGION=$(echo $ECR_URI | cut -d'.' -f4)
 
 echo "리전: $REGION"
 echo "[1/3] ECR 로그인 중..."
 aws ecr get-login-password --region $REGION \
-  | docker login --username AWS --password-stdin \
-  $(echo $ECR_URI | cut -d'/' -f1)
+  | sg docker -c "docker login --username AWS --password-stdin $(echo $ECR_URI | cut -d'/' -f1)"
 
 echo "[2/3] 이미지 태그 붙이기..."
-docker tag ai-image-analyzer:latest $ECR_URI:latest
+sg docker -c "docker tag ai-image-analyzer:latest $ECR_URI:latest"
 
 echo "[3/3] ECR 에 push 중..."
-docker push $ECR_URI:latest
+sg docker -c "docker push $ECR_URI:latest"
 
 echo "완료! ECR URI: $ECR_URI:latest"
