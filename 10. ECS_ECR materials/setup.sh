@@ -7,6 +7,14 @@
 
 set -e  # 오류 발생 시 즉시 중단
 
+# ── 0. .env 파일에서 환경변수 로드 ─────────────────
+if [ -f ~/image_analyzer/.env ]; then
+  set -a
+  source ~/image_analyzer/.env
+  set +a
+  echo ".env 로드 완료"
+fi
+
 # ── 1. Docker 설치 ──────────────────────────────────
 echo "[1/4] Docker 설치 중..."
 sudo yum install -y docker
