@@ -9,9 +9,7 @@ set -e  # 오류 발생 시 즉시 중단
 
 # ── 0. .env 파일에서 환경변수 로드 ─────────────────
 if [ -f ~/image_analyzer/.env ]; then
-  set -a
-  source ~/image_analyzer/.env
-  set +a
+  export $(grep -v '^#' ~/image_analyzer/.env | xargs)
   echo ".env 로드 완료"
 fi
 
@@ -45,7 +43,7 @@ echo "빌드 완료"
 
 # ── 4. 로컬 실행 테스트 ─────────────────────────────
 echo "[4/4] 컨테이너 실행 중... (Ctrl+C 로 중단)"
-echo "브라우저에서 http://\$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4):5000/ 접속하여 확인"
+echo "브라우저에서 http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4):5000/ 접속하여 확인"
 sg docker -c "docker run -p 5000:5000 \
   -e GEMINI_API_KEY=$GEMINI_API_KEY \
   -e AWS_BUCKET_NAME=$AWS_BUCKET_NAME \
