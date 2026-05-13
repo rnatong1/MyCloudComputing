@@ -1,0 +1,15 @@
+<기존 스크립트 파일(3주차 스크립트) 삭제>
+rm setup.sh
+
+
+<스크립트 파일 다운로드>
+wget https://raw.githubusercontent.com/rnatong1/MyCloudComputing/main/10.%20ECS_ECR%20materials/setup.sh
+wget https://raw.githubusercontent.com/rnatong1/MyCloudComputing/main/10.%20ECS_ECR%20materials/push_to_ecr.sh
+
+
+<setup 스크립트 파일 실행>
+bash setup.sh
+
+
+<push_to_ecr 스크립트 파일 실행>
+bash push_to_ecr.sh <ECR_URI>
