@@ -37,7 +37,7 @@ echo "환경변수 확인 완료"
 # ── 3. Docker 이미지 빌드 ───────────────────────────
 echo "[3/4] Docker 이미지 빌드 중..."
 cd ~/image_analyzer
-# Dockerfile 다운로드
+# Dockerfile 다운로드 (cd 이후에 실행)
 wget -q -O Dockerfile https://raw.githubusercontent.com/rnatong1/MyCloudComputing/main/10.%20ECS_ECR%20materials/Dockerfile
 # ec2-user 그룹 적용을 위해 newgrp 대신 sg 사용
 sg docker -c "docker build -t ai-image-analyzer ."
